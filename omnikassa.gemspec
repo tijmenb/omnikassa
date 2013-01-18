@@ -2,11 +2,11 @@
 require File.expand_path('../lib/omnikassa/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Tijmen Brommet"]
+  gem.authors       = ["Tijmen"]
   gem.email         = ["tijmen@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{Gem for Omnikassa}
+  gem.summary       = %q{Gem for Omnikassa}
+  gem.homepage      = "https://github.com/tijmenb/omnikassa"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
@@ -16,5 +16,4 @@ Gem::Specification.new do |gem|
   gem.version       = Omnikassa::VERSION
 
   gem.add_development_dependency "rspec"
-
 end

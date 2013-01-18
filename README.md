@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/tijmenb/omnikassa)
+
 # Omnikassa
 
 De Omnikassa Gem is een wrapper voor Rabobank's Omnikassa.
@@ -29,24 +31,22 @@ end
 
 ```ruby
 def payment
-  omni = Omnikassa::Request.new(
+  @omnikassa_request = Omnikassa::Request.new(
     amount: 1234, # bedrag in centen
     return_url: payment_return_url(), # de URL waar de user naartoe gaat na betaling
     response_url: payment_response_url(), # URL waar Rabo naar POST na een betaling
     reference: 1223123123 # Een unieke identifier voor je transactie
   )
-
-  @post_fields = omni.post_fields
 end
 ```
 
 ### 3. In de view van die controller:
 
 ```erb
-<%= form_tag(@post_fields[:url]) do |f| %>
-  <%= text_field_tag 'Data', @post_fields[:data] %>
-  <%= text_field_tag 'InterfaceVersion', @post_fields[:interface] %>
-  <%= text_field_tag 'Seal', @post_fields[:seal] %>
+<%= form_tag @omnikassa_request.url do |f| %>
+  <%= hidden_field_tag 'Data', @omnikassa_request.data_string %>
+  <%= hidden_field_tag 'InterfaceVersion', @omnikassa_request.interface_version %>
+  <%= hidden_field_tag 'Seal', @omnikassa_request.seal %>
   <%= submit_tag 'Naar betaling' %>
 <% end %>
 ```
@@ -68,7 +68,7 @@ end
 
 ```ruby
 def payment_response
-  @response = Omnikassa::Response.new(params)
+  response = Omnikassa::Response.new(params)
   if response.success?
     # sla de betaling op in de database
   else

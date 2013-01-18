@@ -4,6 +4,10 @@ module Omnikassa
     '978' => 'euro'
   }
 
+  PAYMENT_MEAN_BRANDS = %W{IDEAL VISA MASTERCARD MAESTRO MINITIX INCASSO ACCEPTGIRO REMBOURS}
+
+  PAYMENT_MEAN_TYPES = %W{CREDIT_TRANSFER CARD OTHER}
+
   # Response code van pagina 25-27.
   RESPONSE_CODES = {
     '00' => 'Transaction success, authorization accepted.',

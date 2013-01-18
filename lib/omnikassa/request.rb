@@ -15,24 +15,27 @@ module Omnikassa
       end
     end
 
-    # Fields we need to POST to Rabobank
-    def post_fields
-      { data: stringified_data, seal: seal, interface: 'HP_1.0', url: Omnikassa.configuration.rabobank_url }
+    def url
+      Omnikassa.configuration.rabobank_url
     end
 
-    private
+    # Turn a has into a string like bla=bla|trala=trala
+    def data_string
+      Data.serialize(data)
+    end
 
     def seal
       Omnikassa::seal(seal_seed)
     end
 
-    def seal_seed
-      stringified_data + Omnikassa.configuration.secret_key
+    def interface_version
+      'HP_1.0'
     end
 
-    # Turn a has into a string like bla=bla|trala=trala
-    def stringified_data
-      Data.serialize(data)
+    private
+
+    def seal_seed
+      data_string + Omnikassa.configuration.secret_key
     end
 
     # The Data component
