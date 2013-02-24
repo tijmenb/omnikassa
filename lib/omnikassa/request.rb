@@ -1,7 +1,7 @@
 module Omnikassa
   class Request
 
-    attr_accessor :amount, :return_url, :response_url, :reference
+    attr_accessor :amount, :return_url, :response_url, :reference, :language
 
     # request = Omnikassa::Request.new(
     #   amount: 1234, # bedrag in centen
@@ -66,6 +66,8 @@ module Omnikassa
         # Versie van de te gebruiken geheime sleutel (secretKey)
         # die door aan de ondernemer geleverd/bekend gemaakt wordt.
         keyVersion: Omnikassa.configuration.key_version,
+
+        customerLanguage: language || Omnikassa.configuration.language
       }
     end
   end
