@@ -59,6 +59,10 @@ module Omnikassa
         # Zie bijlage §9.3. Numerieke reeks, beperkt tot 12 tekens (maximaal bedrag is 999999999999)
         amount: amount,
 
+        # De lijst van betaalwijzes.
+        # Geldig: ideal, minitix, visa, mastercard, maestro, incasso, acceptgiro, rembours
+        paymentMeanBrandList: payment_methods,
+
         # Referentie van de Rabo OmniKassa‐transactie die uniek moet zijn voor elke ondernemer.
         # Alfanumerieke reeks, beperkt tot 35 tekens.
         transactionReference: reference,
@@ -67,8 +71,17 @@ module Omnikassa
         # die door aan de ondernemer geleverd/bekend gemaakt wordt.
         keyVersion: Omnikassa.configuration.key_version,
 
+        # Taal van het betaalscherm (nl of en)
         customerLanguage: language || Omnikassa.configuration.language
       }
+    end
+
+    def payment_methods
+      (Omnikassa.configuration.payment_methods || default_payment_methods).join(',').upcase
+    end
+
+    def default_payment_methods
+      [:ideal, :minitix, :visa, :mastercard, :maestro]
     end
   end
 end

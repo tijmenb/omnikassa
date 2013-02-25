@@ -13,11 +13,11 @@ describe Omnikassa::Request do
     }
 
     it 'stringifies the data' do
-      request.data_string.should eq "currencyCode=978|merchantId=002020000000001|normalReturnUrl=RETURN|automaticResponseUrl=RESPONSE|amount=1234|transactionReference=1223123123|keyVersion=1|customerLanguage=nl"
+      request.data_string.should eq "currencyCode=978|merchantId=002020000000001|normalReturnUrl=RETURN|automaticResponseUrl=RESPONSE|amount=1234|paymentMeanBrandList=IDEAL,MINITIX,VISA,MASTERCARD,MAESTRO,INCASSO,ACCEPTGIRO,REMBOURS|transactionReference=1223123123|keyVersion=1|customerLanguage=nl"
     end
 
     it 'seals' do
-      request.seal.should eq "a1d02cfb17b1f804740847879aeb6125030adff23a1b6845f0ed486370d4dc92"
+      request.seal.should eq "ad830c9c402a22a63d07b92973b0e5cbd9abc28d3d5b4ea6798e58effd848818"
     end
 
     it 'has interface' do
@@ -32,7 +32,7 @@ describe Omnikassa::Request do
   describe 'overriding language' do
     it 'uses the provided language' do
       request = Omnikassa::Request.new(amount: 1234, return_url: 'RETURN', response_url: 'RESPONSE', reference: 1223123123, language: 'en' )
-      request.data_string.should eq "currencyCode=978|merchantId=002020000000001|normalReturnUrl=RETURN|automaticResponseUrl=RESPONSE|amount=1234|transactionReference=1223123123|keyVersion=1|customerLanguage=en"
+      request.data_string.should eq "currencyCode=978|merchantId=002020000000001|normalReturnUrl=RETURN|automaticResponseUrl=RESPONSE|amount=1234|paymentMeanBrandList=IDEAL,MINITIX,VISA,MASTERCARD,MAESTRO,INCASSO,ACCEPTGIRO,REMBOURS|transactionReference=1223123123|keyVersion=1|customerLanguage=en"
     end
   end
 end

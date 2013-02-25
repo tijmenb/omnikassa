@@ -7,4 +7,5 @@ Omnikassa.configure do |config|
   config.currency_code = 978
   config.rabobank_url = 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
   config.language = 'nl'
+  config.payment_methods = [:ideal, :minitix, :visa, :mastercard, :maestro, :incasso, :acceptgiro, :rembours]
 end
