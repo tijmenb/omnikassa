@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/tijmenb/omnikassa.png?branch=master)](https://travis-ci.org/tijmenb/omnikassa)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/tijmenb/omnikassa)
 
 # Omnikassa
