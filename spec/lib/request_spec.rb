@@ -24,7 +24,13 @@ describe Omnikassa::Request do
       request.interface_version.should eq "HP_1.0"
     end
 
-    it 'has the url' do
+    it 'returns the URL for prod if environment is production' do
+      Omnikassa.configuration.environment = :production
+      request.url.should eq "https://payment-webinit.omnikassa.rabobank.nl/paymentServlet"
+    end
+
+    it 'returns the URL for test if environment is test' do
+      Omnikassa.configuration.environment = :test
       request.url.should eq "https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet"
     end
   end

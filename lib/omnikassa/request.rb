@@ -16,7 +16,11 @@ module Omnikassa
     end
 
     def url
-      Omnikassa.configuration.rabobank_url
+      if Omnikassa.configuration.environment == :production
+        'https://payment-webinit.omnikassa.rabobank.nl/paymentServlet'
+      else
+        'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
+      end
     end
 
     # Turn a has into a string like bla=bla|trala=trala

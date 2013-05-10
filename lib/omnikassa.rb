@@ -15,6 +15,12 @@ module Omnikassa
   end
 
   def self.configuration
-    @configuration ||= Configuration.new
+    @configuration ||= Configuration.new(
+      key_version: 1,
+      currency_code: 978, # EURO
+      language: 'nl',
+      environment: :test,
+      payment_methods: [:ideal, :minitix, :visa, :mastercard, :maestro, :incasso, :acceptgiro, :rembours]
+    )
   end
 end
