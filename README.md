@@ -3,45 +3,36 @@
 
 # Omnikassa
 
-De Omnikassa Gem is een wrapper voor Rabobank's Omnikassa.
+De Omnikassa Gem is een wrapper voor [Rabobank's Omnikassa](http://www.rabobank.nl/bedrijven/producten/betalen_en_ontvangen/geld_ontvangen/rabo_omnikassa/).
 
-## Hoe Omnikassa werkt
+## Usage
 
-Omnikassa werkt in twee stappen:
-
-1. Je laat de user een POST-request maken naar Rabobank. Daar betaalt de user met iDeal, Minitix of Credit Card.
-
-2. Als de transactie voltooid is, wordt de user weer redirect naar de app.
-
-## Gebruik
-
-### 1. Configureer de app met je gegevens.
+Configureer de app met je gegevens:
 
 ```ruby
+# config/initializers/omnikassa.rb
 Omnikassa.configure do |config|
   config.merchant_id =  '002020000000001'
   config.secret_key =  '002020000000001_KEY1'
-  config.key_version = 1
-  config.currency_code = 978
-  config.rabobank_url = 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
+  config.environment = :test
 end
 ```
 
-
-### 2. In een controller:
+Maak een request aan in de controller:
 
 ```ruby
+# controllers/payment_controller.rb
 def payment
   @omnikassa_request = Omnikassa::Request.new(
     amount: 1234, # bedrag in centen
-    return_url: payment_return_url(), # de URL waar de user naartoe gaat na betaling
-    response_url: payment_response_url(), # URL waar Rabo naar POST na een betaling
-    reference: 1223123123 # Een unieke identifier voor je transactie
+    return_url: payment_return_url, # de URL waar de user naartoe gaat na betaling
+    response_url: payment_response_url, # URL waar Rabo naar POST na een betaling
+    reference: '1223123123' # Een unieke identifier voor je transactie
   )
 end
 ```
 
-### 3. In de view van die controller:
+Een form voor de redirect:
 
 ```erb
 <%= form_tag @omnikassa_request.url do |f| %>
@@ -52,9 +43,10 @@ end
 <% end %>
 ```
 
-### 4. Nog een method als de user terugkomt:
+Als de user heeft betaald, dan wordt hij geredirect naar `payment_return_url`.
 
 ```ruby
+# controllers/payment_controller.rb
 def payment_return
   @response = Omnikassa::Response.new(params)
   if response.success?
@@ -65,9 +57,10 @@ def payment_return
 end
 ```
 
-### 4. En nog een method waar de Rabo server naartoe POST:
+Maar die redirect is niet gegarandeerd, dus je doet de afhandeling van de betaling in de callback.
 
 ```ruby
+# controllers/payment_controller.rb
 def payment_response
   response = Omnikassa::Response.new(params)
   if response.success?
@@ -76,14 +69,6 @@ def payment_response
     # doe iets anders
   end
 end
-```
-
-### 5. En in je routes:
-
-```ruby
-get 'checkout/payment' => 'checkout#payment'
-post 'checkout/payment_return' => 'checkout#payment_return', :as => :payment_return
-post 'checkout/payment_response' => 'checkout#payment_response', :as => :payment_response
 ```
 
 ## Specs
@@ -99,8 +84,6 @@ Om je eigen applicatie te testen is er `Omnikassa::Mocks`. Hier vind je POST-dat
 - `ideal_error`: technische fout bij Rabo.
 
 Todo: Minitix, Card, etc.
-
-### Gebruik
 
 Je kan zoiets doen in rspec:
 
