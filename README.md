@@ -1,15 +1,20 @@
 [![Build Status](https://travis-ci.org/tijmenb/omnikassa.png?branch=master)](https://travis-ci.org/tijmenb/omnikassa)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/tijmenb/omnikassa)
 
-# Omnikassa
+## Rabobank Omnikassa
 
-De Omnikassa Gem is een wrapper voor [Rabobank's Omnikassa](http://www.rabobank.nl/bedrijven/producten/betalen_en_ontvangen/geld_ontvangen/rabo_omnikassa/).
+Omnikassa is a Rails gem for [Rabobank's Omnikassa](http://www.rabobank.nl/bedrijven/producten/betalen_en_ontvangen/geld_ontvangen/rabo_omnikassa/). We use manual [handleiding 4.1](http://www.rabobank.nl/images/rabobank_omnikassa_integratiehandleiding_versie_4_1_december_2012_29420242.pdf) (Dutch).
 
-## Usage
+This gem is not affiliated with the Rabobank.
 
-Configureer de app met je gegevens:
+### Installation
+
+Install the gem and create an initializer.
 
 ```ruby
+# Gemfile
+gem 'omnikassa', '~> 0.0.2'
+
 # config/initializers/omnikassa.rb
 Omnikassa.configure do |config|
   config.merchant_id =  '002020000000001'
@@ -18,23 +23,28 @@ Omnikassa.configure do |config|
 end
 ```
 
-Maak een request aan in de controller:
+Above are the official testing credentials from Rabo, so you don't have to use key and secret to run a test. 
+
+### Quickstart
+
+Create a request in your controller:
 
 ```ruby
 # controllers/payment_controller.rb
 def payment
   @omnikassa_request = Omnikassa::Request.new(
-    amount: 1234, # bedrag in centen
-    return_url: payment_return_url, # de URL waar de user naartoe gaat na betaling
-    response_url: payment_response_url, # URL waar Rabo naar POST na een betaling
-    reference: '1223123123' # Een unieke identifier voor je transactie
+    amount: 1234, # transaction amount in cents
+    reference: '1223123123', # A unique identifier for the transaction
+    return_url: payment_return_url, 
+    response_url: payment_response_url
   )
 end
 ```
 
-Een form voor de redirect:
+Then create a form that will POST the data you just provided to the Omnikassa:
 
 ```erb
+# views/payments/payment.html.erb
 <%= form_tag @omnikassa_request.url do |f| %>
   <%= hidden_field_tag 'Data', @omnikassa_request.data_string %>
   <%= hidden_field_tag 'InterfaceVersion', @omnikassa_request.interface_version %>
@@ -43,7 +53,7 @@ Een form voor de redirect:
 <% end %>
 ```
 
-Als de user heeft betaald, dan wordt hij geredirect naar `payment_return_url`.
+After a user has completed the payment, he is redirected to the URL we specified as `return_url`. You can show a message depending on the outcome of the payment.
 
 ```ruby
 # controllers/payment_controller.rb
@@ -57,41 +67,47 @@ def payment_return
 end
 ```
 
-Maar die redirect is niet gegarandeerd, dus je doet de afhandeling van de betaling in de callback.
+Immediately after a payment is completed, Rabobank will send a POST-request to whatever URL we specified in `response_url`. Use this to save the payment to the database, send out emails, etc. 
 
 ```ruby
 # controllers/payment_controller.rb
 def payment_response
   response = Omnikassa::Response.new(params)
   if response.success?
-    # sla de betaling op in de database
+    # update database
   else
-    # doe iets anders
+    # don't update, send out warning, etc
   end
 end
 ```
 
-## Specs
-
-Om je eigen applicatie te testen is er `Omnikassa::Mocks`. Hier vind je POST-data zoals die door Rabo worden gestuurd bij een transactie. Dit zorgt ervoor dat je niet handmatig alle responses van Rabobank hoeft te testen. 
-
-**iDEAL betaling**
-
-- `ideal_ok`: Betaling gelukt
-- `ideal_cancelled`: Betaling is afgebroken door de gebruiker
-- `ideal_verlopen`: Betaling is verlopen
-- `ideal_geopend`: Geen idee.
-- `ideal_error`: technische fout bij Rabo.
-
-Todo: Minitix, Card, etc.
-
-Je kan zoiets doen in rspec:
+### Configurations and defaults
 
 ```ruby
-describe CheckoutController do
-  it 'can handle a response from rabo' do
-    post :return_payment, Omnikassa::Mock.ideal_ok
-    assigns(:payment).status.should equal 'paid'
-  end
+# config/initializers/omnikassa.rb
+Omnikassa.configure do |config|
+  config.merchant_id =  '002020000000001'
+  config.secret_key =  '002020000000001_KEY1'
+  config.environment = :test
+  key_version = 1,
+  currency_code = 978, # EURO
+  language =  'nl',
+  payment_methods: [:ideal, :minitix, :visa, :mastercard, :maestro, :incasso, :acceptgiro, :rembours]
 end
 ```
+
+### Sending a pull request
+
+Very welcome!
+
+1. [Fork the project](https://help.github.com/articles/fork-a-repo).
+2. Create a branch - `git checkout -b adding_magic`
+3. Make your changes, and add some tests!
+4. Check that the tests pass - `bundle exec rake`
+5. Commit your changes - `git commit -am "Added some magic"`
+6. Push the branch to Github - `git push origin adding_magic`
+7. Send us a [pull request](https://help.github.com/articles/using-pull-requests)!
+
+### License
+
+Copyright (C) 2013 by Tijmen Brommet. Published under the MIT license. See LICENSE.md for details.
