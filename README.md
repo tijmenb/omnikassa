@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/tijmenb/omnikassa.png?branch=master)](https://travis-ci.org/tijmenb/omnikassa)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/tijmenb/omnikassa)
+[![Gem Version](https://badge.fury.io/rb/omnikassa.png)](http://badge.fury.io/rb/omnikassa)
 
 ## Rabobank Omnikassa
 
